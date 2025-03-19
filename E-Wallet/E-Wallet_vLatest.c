@@ -17,7 +17,7 @@
 #define MAX_USERS 1000
 
 #define RESET "\033[0m" // Reset color
-#define BOLD "\033[1m" // Bold text
+#define BOLD "\033[1m"  // Bold text
 #define RED "\033[31m"
 #define GREEN "\033[32m"
 #define YELLOW "\033[33m"
@@ -26,8 +26,7 @@
 #define CYAN "\033[36m"
 #define WHITE "\033[37m"
 
-
-                        // Structures
+// Structures
 
 typedef struct transaction
 {
@@ -38,28 +37,28 @@ typedef struct transaction
     char time[TIME_SIZE];
     double amount;
 
-}tran;
+} tran;
 
 typedef struct transactionNode
 {
     tran transaction;
-    struct transactionNode* next;
+    struct transactionNode *next;
 
-}transactionNode;
+} transactionNode;
 
 typedef struct request
 {
-   char from[MAX_LENGTH];
-   double amount;
+    char from[MAX_LENGTH];
+    double amount;
 
-}req;
+} req;
 
 typedef struct requestNode
 {
     req request;
-    struct requestNode* next;
+    struct requestNode *next;
 
-}requestNode;
+} requestNode;
 
 typedef struct user
 {
@@ -67,36 +66,34 @@ typedef struct user
     char password1[MAX_LENGTH];
     char password2[MAX_LENGTH];
     char phn_nmbr[MAX_DIGITS];
-    char security_question1[2*MAX_LENGTH];
+    char security_question1[2 * MAX_LENGTH];
     char security_answer1[MAX_LENGTH];
-    char security_question2[2*MAX_LENGTH];
+    char security_question2[2 * MAX_LENGTH];
     char security_answer2[MAX_LENGTH];
 
-    transactionNode* transaction_head;
-    requestNode* request_head;
+    transactionNode *transaction_head;
+    requestNode *request_head;
 
     int transaction_count;
     int request_count;
     double balance;
     double loan_amount;
 
-}user;
+} user;
 
-
-                        // Global Variables
+// Global Variables
 user users[MAX_USERS];
 int user_count = 0;
-const char* filename = "wallet_data.dat";
+const char *filename = "wallet_data.dat";
 
-
-                        // Function Prototypes (31)
+// Function Prototypes (31)
 
 // Utility Functions
 void clear_input_buffer();
 int confirm_action(const char *message);
 void free_transaction_list();
-transactionNode* reverse_transaction_list(transactionNode* original_head);
-requestNode* reverse_request_list(requestNode* original_head);
+transactionNode *reverse_transaction_list(transactionNode *original_head);
+requestNode *reverse_request_list(requestNode *original_head);
 void free_request_list();
 void cleanup_users();
 void timeNdate(tran *transaction);
@@ -132,7 +129,6 @@ void dashboard(user *current_user);
 void main_menu();
 void intro();
 
-
 int main()
 {
 
@@ -145,55 +141,53 @@ int main()
     return 0;
 }
 
-
-
-                        // USER-DEFINED FUNCTIONs [utility functions]
+// USER-DEFINED FUNCTIONs [utility functions]
 
 void clear_input_buffer()
 {
     int c;
-    while((c = getchar()) != '\n' && c != EOF);
+    while ((c = getchar()) != '\n' && c != EOF)
+        ;
 }
-
 
 int confirm_action(const char *message)
 {
     char confirm;
     printf(CYAN "%s (y/n): " RESET, message);
     scanf(" %c", &confirm); // Leading space to consume any leftover newline
-    clear_input_buffer();  // Clear leftover input
+    clear_input_buffer();   // Clear leftover input
     return (confirm == 'y' || confirm == 'Y');
 }
 
 // Dynamic Memory Cleanup
-void free_transaction_list(transactionNode* head)
+void free_transaction_list(transactionNode *head)
 {
-    while(head != NULL)
+    while (head != NULL)
     {
-        transactionNode* temp = head;
+        transactionNode *temp = head;
         head = head->next;
         free(temp);
     }
 }
 
-void free_request_list(requestNode* head)
+void free_request_list(requestNode *head)
 {
-    while(head != NULL)
+    while (head != NULL)
     {
-        requestNode* temp = head;
+        requestNode *temp = head;
         head = head->next;
         free(temp);
     }
 }
 
-transactionNode* reverse_transaction_list(transactionNode* original_head)
+transactionNode *reverse_transaction_list(transactionNode *original_head)
 {
-    transactionNode* reversed_head = NULL; // Head of the reversed list
-    transactionNode* temp = NULL; // New node for the reversed list
+    transactionNode *reversed_head = NULL; // Head of the reversed list
+    transactionNode *temp = NULL;          // New node for the reversed list
 
-    while(original_head  != NULL)
+    while (original_head != NULL)
     {
-        temp = (transactionNode*)malloc(sizeof(transactionNode));
+        temp = (transactionNode *)malloc(sizeof(transactionNode));
         if (temp == NULL)
         {
             printf(RED "Error: Memory allocation failed during list reversal.\n" RESET);
@@ -212,14 +206,14 @@ transactionNode* reverse_transaction_list(transactionNode* original_head)
     return reversed_head; // Return the head of the reversed list
 }
 
-requestNode* reverse_request_list(requestNode* original_head)
+requestNode *reverse_request_list(requestNode *original_head)
 {
-    requestNode* reversed_head = NULL; // Head of the reversed list
-    requestNode* temp = NULL; // New node for the reversed list
+    requestNode *reversed_head = NULL; // Head of the reversed list
+    requestNode *temp = NULL;          // New node for the reversed list
 
-    while(original_head  != NULL)
+    while (original_head != NULL)
     {
-        temp = (requestNode*)malloc(sizeof(requestNode));
+        temp = (requestNode *)malloc(sizeof(requestNode));
         if (temp == NULL)
         {
             printf(RED "Error: Memory allocation failed during list reversal.\n" RESET);
@@ -240,7 +234,7 @@ requestNode* reverse_request_list(requestNode* original_head)
 
 void cleanup_users()
 {
-    for(int i = 0; i < user_count; i++)
+    for (int i = 0; i < user_count; i++)
     {
         free_transaction_list(users[i].transaction_head);
         free_request_list(users[i].request_head);
@@ -257,14 +251,13 @@ void timeNdate(tran *transaction)
     strftime(transaction->time, sizeof(transaction->time), "%H:%M:%S", t);
 }
 
-
 void clear_screen()
 {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif // _WIN32
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif // _WIN32
 }
 
 // File Operations
@@ -298,12 +291,14 @@ void load_user_data()
         // Load transactions
         transactionNode *last_transaction = NULL;
         int transaction_count;
-        if (fread(&transaction_count, sizeof(int), 1, file) != 1) break;
+        if (fread(&transaction_count, sizeof(int), 1, file) != 1)
+            break;
 
         for (int j = 0; j < transaction_count; j++)
         {
             tran t;
-            if (fread(&t, sizeof(tran), 1, file) != 1) break;
+            if (fread(&t, sizeof(tran), 1, file) != 1)
+                break;
 
             transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
             new_transaction->transaction = t;
@@ -323,12 +318,14 @@ void load_user_data()
         // Load requests
         requestNode *last_request = NULL;
         int request_count;
-        if (fread(&request_count, sizeof(int), 1, file) != 1) break;
+        if (fread(&request_count, sizeof(int), 1, file) != 1)
+            break;
 
         for (int j = 0; j < request_count; j++)
         {
             req r;
-            if (fread(&r, sizeof(req), 1, file) != 1) break;
+            if (fread(&r, sizeof(req), 1, file) != 1)
+                break;
 
             requestNode *new_request = (requestNode *)malloc(sizeof(requestNode));
             new_request->request = r;
@@ -416,17 +413,17 @@ void save_user_data(int overwrite)
     fclose(file);
 
     // Provide feedback to the user
-        printf(overwrite ? CYAN "Data fully overwritten to %s!\n" RESET : CYAN "New data appended to %s!\n" RESET, filename);
+    printf(overwrite ? CYAN "Data fully overwritten to %s!\n" RESET : CYAN "New data appended to %s!\n" RESET, filename);
 
     Sleep(250);
 }
 
 void delete_user_data()
 {
-    if(remove(filename) == 0)
+    if (remove(filename) == 0)
     {
         printf(GREEN "File deleted successfully.\n" RESET);
-        user_count = 0; // Reset user count after deletion
+        user_count = 0;  // Reset user count after deletion
         cleanup_users(); // Free dynamically allocated memory
     }
     else
@@ -436,20 +433,16 @@ void delete_user_data()
     Sleep(1000);
 }
 
-
-
 int find_user_index(char *username)
 {
-    for(int i=0; i<user_count; i++)
+    for (int i = 0; i < user_count; i++)
     {
-        if(strcmp(users[i].username, username)==0)
+        if (strcmp(users[i].username, username) == 0)
         {
             return i; // User found
-
         }
     }
     return -1; // User not found
-
 }
 
 void set_security_QnA(user *new_user)
@@ -481,7 +474,7 @@ void forget_password()
     strtok(username, "\n");
 
     int index = find_user_index(username);
-    if(index == -1)
+    if (index == -1)
     {
         printf(RED "User not found!\n" RESET);
         Sleep(2000);
@@ -500,8 +493,8 @@ void forget_password()
     fgets(answer2, MAX_LENGTH, stdin);
     strtok(answer2, "\n");
 
-    if(strcmp(users[index].security_answer1, answer1) == 0 &&
-       strcmp(users[index].security_answer2, answer2) == 0)
+    if (strcmp(users[index].security_answer1, answer1) == 0 &&
+        strcmp(users[index].security_answer2, answer2) == 0)
     {
         printf(GREEN "Answers verified! You can now reset your password.\n" RESET);
         Sleep(1000);
@@ -527,12 +520,11 @@ void reset_password(int index)
         fgets(users[index].password2, MAX_LENGTH, stdin);
         strtok(users[index].password2, "\n");
 
-        if(strcmp(users[index].password1, users[index].password2) != 0)
+        if (strcmp(users[index].password1, users[index].password2) != 0)
         {
             printf(RED "Passwords don't match! Try again.\n" RESET);
         }
-    }
-    while(strcmp(users[index].password1, users[index].password2) != 0);
+    } while (strcmp(users[index].password1, users[index].password2) != 0);
 
     printf(GREEN "\nPassword Reset Successful!\n" RESET);
     Sleep(2000);
@@ -541,14 +533,14 @@ void reset_password(int index)
 int is_number_valid(const char *number)
 {
     int length = strlen(number);
-    if(length != MAX_DIGITS-1)
+    if (length != MAX_DIGITS - 1)
     {
         return 0; // Length Mismatch
     }
 
-    for(int i=0; i<length; i++)
+    for (int i = 0; i < length; i++)
     {
-        if(isdigit(number[i]) == 0)
+        if (isdigit(number[i]) == 0)
         {
             return 0; // Non-digit character found
         }
@@ -591,13 +583,11 @@ void Register()
         fgets(new_user.password2, MAX_LENGTH, stdin);
         strtok(new_user.password2, "\n");
 
-        if(strcmp(new_user.password1, new_user.password2) != 0)
+        if (strcmp(new_user.password1, new_user.password2) != 0)
         {
             printf(RED "Passwords don't match! Try again.\n" RESET);
         }
-    }
-    while(strcmp(new_user.password1, new_user.password2) != 0);
-
+    } while (strcmp(new_user.password1, new_user.password2) != 0);
 
     // Phone number validation
     do
@@ -647,7 +637,7 @@ int login()
     strtok(password, "\n");
 
     int index = find_user_index(username);
-    if(index != -1 && strcmp(users[index].password1, password)==0)
+    if (index != -1 && strcmp(users[index].password1, password) == 0)
     {
         return index;
     }
@@ -671,15 +661,15 @@ int all_accounts()
 
     printf(BLUE "REGISTERED ACCOUNTS:\n" RESET);
     printf("--------------------\n");
-    for(int i = 0; i < user_count; i++)
+    for (int i = 0; i < user_count; i++)
     {
-        printf("%d. %s\n", i+1, users[i].username);
+        printf("%d. %s\n", i + 1, users[i].username);
     }
     printf("--------------------\n");
 
     int choice;
     printf(CYAN "Choose an account to login (0 to exit): " RESET);
-    while(scanf("%d", &choice) != 1 || choice < 0 || choice > user_count)
+    while (scanf("%d", &choice) != 1 || choice < 0 || choice > user_count)
     {
         clear_input_buffer();
         printf(RED "Invalid choice! Please enter a valid number (1-%d, or 0 to exit): " RESET, user_count);
@@ -695,14 +685,14 @@ int all_accounts()
     // Adjust for zero-based index
     int account_index = choice - 1;
 
-////////
+    ////////
     char password[MAX_LENGTH];
     printf(CYAN "\nEnter password for '%s': " RESET, users[account_index].username);
     clear_input_buffer();
     fgets(password, MAX_LENGTH, stdin);
     strtok(password, "\n");
 
-    if(strcmp(users[account_index].password1, password)==0)
+    if (strcmp(users[account_index].password1, password) == 0)
     {
         // Return the logged-in user's index
         return account_index;
@@ -717,13 +707,13 @@ int all_accounts()
     }
 }
 
-void add_money(user *current_user)///
+void add_money(user *current_user) ///
 {
     clear_screen();
 
     double amount;
     printf(CYAN "Enter an amount to add (0 to exit): " RESET);
-    while(scanf("%lf", &amount) != 1 || amount <= 0)
+    while (scanf("%lf", &amount) != 1 || amount <= 0)
     {
         clear_input_buffer();
 
@@ -745,10 +735,10 @@ void add_money(user *current_user)///
     printf(GREEN "New Balance: %.2lf BDT\n" RESET, current_user->balance);
 
     // Add transaction log
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* new_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(new_transaction == NULL)
+        transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (new_transaction == NULL)
         {
             printf(RED "Memory allocation failed for transaction log.\n" RESET);
             return;
@@ -774,13 +764,13 @@ void add_money(user *current_user)///
     _getch();
 }
 
-void cash_out(user *current_user)///
+void cash_out(user *current_user) ///
 {
     clear_screen();
 
     double amount;
     printf(CYAN "Enter an amount to cash-out (0 to exit): " RESET);
-    while(scanf("%lf", &amount) != 1 || amount <= 0 || amount > current_user->balance)
+    while (scanf("%lf", &amount) != 1 || amount <= 0 || amount > current_user->balance)
     {
         clear_input_buffer();
 
@@ -796,23 +786,21 @@ void cash_out(user *current_user)///
             printf(RED "Invalid input! Please enter a positive amount: " RESET);
         }
 
-        else if(amount > current_user->balance)
+        else if (amount > current_user->balance)
         {
             printf(RED "Insufficient balance! Current balance: %.2lf BDT. Try again: " RESET, current_user->balance);
         }
     }
 
-
     current_user->balance -= amount;
     printf(GREEN "Cashed out %.2lf BDT successfully!\n" RESET, amount);
     printf(GREEN "New Balance: %.2lf BDT\n" RESET, current_user->balance);
 
-
     // Add transaction log
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* new_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(new_transaction == NULL)
+        transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (new_transaction == NULL)
         {
             printf(RED "Memory allocation failed for transaction log.\n" RESET);
             return;
@@ -838,7 +826,7 @@ void cash_out(user *current_user)///
     _getch();
 }
 
-void send_money(user *current_user)///
+void send_money(user *current_user) ///
 {
     clear_screen();
 
@@ -849,7 +837,7 @@ void send_money(user *current_user)///
     strtok(recipient, "\n");
 
     // Return to dashboard
-    if(strcmp(recipient, "0") == 0)
+    if (strcmp(recipient, "0") == 0)
     {
         printf(YELLOW "\nReturning to dashboard...\n" RESET);
         Sleep(1000);
@@ -857,7 +845,7 @@ void send_money(user *current_user)///
     }
 
     // Prevent self-transfer
-    if(strcmp(recipient, current_user->username) == 0)
+    if (strcmp(recipient, current_user->username) == 0)
     {
         printf(RED "Error: Can't send money to own account.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
@@ -866,7 +854,7 @@ void send_money(user *current_user)///
     }
 
     int recipient_index = find_user_index(recipient);
-    if(recipient_index == -1)
+    if (recipient_index == -1)
     {
         printf(RED "Error: Recipient not found. Please check the username.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
@@ -876,7 +864,7 @@ void send_money(user *current_user)///
 
     double amount;
     printf(CYAN "Enter amount to send (0 to exit): " RESET);
-    while(scanf("%lf", &amount) != 1 || amount <= 0 || amount > current_user->balance)
+    while (scanf("%lf", &amount) != 1 || amount <= 0 || amount > current_user->balance)
     {
         clear_input_buffer();
 
@@ -892,7 +880,7 @@ void send_money(user *current_user)///
             printf(RED "Invalid input! Please enter a positive amount: " RESET);
         }
 
-        else if(amount > current_user->balance)
+        else if (amount > current_user->balance)
         {
             printf(RED "Insufficient balance! Current balance: %.2lf BDT. Try again: " RESET, current_user->balance);
         }
@@ -904,12 +892,11 @@ void send_money(user *current_user)///
     printf(GREEN "Successfully sent %.2lf BDT to %s.\n" RESET, amount, recipient);
     printf(GREEN "New Balance: %.2lf BDT\n" RESET, current_user->balance);
 
-
     // Log sender's transaction
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* sender_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(sender_transaction == NULL)
+        transactionNode *sender_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (sender_transaction == NULL)
         {
             printf(RED "Error: Memory allocation failed for sender's transaction.\n" RESET);
             return;
@@ -928,8 +915,8 @@ void send_money(user *current_user)///
     // Log recipient's transaction
     if (users[recipient_index].transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* recipient_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(recipient_transaction == NULL)
+        transactionNode *recipient_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (recipient_transaction == NULL)
         {
             printf(RED "Error: Memory allocation failed for recipient's transaction.\n" RESET);
             return;
@@ -950,7 +937,7 @@ void send_money(user *current_user)///
     _getch();
 }
 
-void request_money(user *current_user)///
+void request_money(user *current_user) ///
 {
     clear_screen();
 
@@ -958,17 +945,17 @@ void request_money(user *current_user)///
     printf(CYAN "Request money from (0 to exit): " RESET);
     clear_input_buffer();
     fgets(recipient, MAX_LENGTH, stdin);
-    strtok(recipient ,"\n");
+    strtok(recipient, "\n");
 
     // Return to dashboard
-    if(strcmp(recipient, "0") == 0)
+    if (strcmp(recipient, "0") == 0)
     {
         printf(YELLOW "\nReturning to dashboard...\n" RESET);
         Sleep(1000);
         return;
     }
 
-	// Validate recipient's username
+    // Validate recipient's username
     if (strcmp(recipient, current_user->username) == 0)
     {
         printf(RED "Error: You cannot request money from yourself.\n" RESET);
@@ -977,8 +964,8 @@ void request_money(user *current_user)///
         return;
     }
 
-	int recipient_index = find_user_index(recipient);
-    if(recipient_index == -1)
+    int recipient_index = find_user_index(recipient);
+    if (recipient_index == -1)
     {
         printf(RED "Error: Recipient username not found.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
@@ -988,7 +975,7 @@ void request_money(user *current_user)///
 
     double request_amount;
     printf(CYAN "Enter amount to request (0 to exit): " RESET);
-    while(scanf("%lf", &request_amount) != 1 || request_amount <= 0)
+    while (scanf("%lf", &request_amount) != 1 || request_amount <= 0)
     {
         clear_input_buffer();
 
@@ -1006,7 +993,7 @@ void request_money(user *current_user)///
     }
 
     // Check if the recipient has space for more requests
-    if(users[recipient_index].request_count >= MAX_REQUESTS)
+    if (users[recipient_index].request_count >= MAX_REQUESTS)
     {
         printf(RED "Error: Recipient's request queue is full. Cannot send request.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
@@ -1015,23 +1002,23 @@ void request_money(user *current_user)///
     }
 
     // Add the request to the recipient's request list
-    requestNode* new_request = (requestNode*)malloc(sizeof(requestNode));
-	if (new_request == NULL)
-	{
+    requestNode *new_request = (requestNode *)malloc(sizeof(requestNode));
+    if (new_request == NULL)
+    {
         printf(RED "Error: Memory allocation failed for the request.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
         _getch();
         return;
-	}
+    }
 
-	strcpy(new_request->request.from, current_user->username);
-	new_request->request.amount = request_amount;
-	new_request->next = NULL;
+    strcpy(new_request->request.from, current_user->username);
+    new_request->request.amount = request_amount;
+    new_request->next = NULL;
 
-/*  // 1. (PREPENDING new request) faster runtime, but the list will be fliped
-	new_request->next = users[recipient_index].request_head;
-	users[recipient_index].request_head =  new_request;
-*/
+    /*  // 1. (PREPENDING new request) faster runtime, but the list will be fliped
+        new_request->next = users[recipient_index].request_head;
+        users[recipient_index].request_head =  new_request;
+    */
 
     // 2. (APPENDING new request) slower runtime, but the list will be in order
     if (users[recipient_index].request_head == NULL)
@@ -1042,7 +1029,7 @@ void request_money(user *current_user)///
     else
     {
         // Traverse to the end of the list
-        requestNode* ptr = users[recipient_index].request_head;
+        requestNode *ptr = users[recipient_index].request_head;
         while (ptr->next != NULL)
         {
             ptr = ptr->next;
@@ -1050,13 +1037,12 @@ void request_money(user *current_user)///
         ptr->next = new_request; // Append the new request
     }
 
-	users[recipient_index].request_count++;
+    users[recipient_index].request_count++;
 
     printf(GREEN "Request for %.2lf BDT was sent to: %s successfully.\n" RESET, request_amount, recipient);
     printf(CYAN "Press any key to continue..." RESET);
     _getch();
 }
-
 
 void provide_requested_money(user *current_user)
 {
@@ -1112,7 +1098,8 @@ void provide_requested_money(user *current_user)
     int recipient_index = find_user_index(temp->request.from);
 
     // Check for sufficient balance
-    if (current_user->balance < requested_amount) {
+    if (current_user->balance < requested_amount)
+    {
         printf(RED "Error: Insufficient balance to fulfill the request.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
         _getch();
@@ -1179,26 +1166,25 @@ void provide_requested_money(user *current_user)
     _getch();
 }
 
-
-void mobile_recharge(user *current_user)///
+void mobile_recharge(user *current_user) ///
 {
     clear_screen();
 
-    char phone_number[MAX_DIGITS+1];
+    char phone_number[MAX_DIGITS + 1];
     printf(CYAN "Enter Phone Number to recharge (0 to exit): " RESET);
     clear_input_buffer();
     fgets(phone_number, sizeof(phone_number), stdin);
     strtok(phone_number, "\n");
 
     // Return to dashboard
-    if(strcmp(phone_number, "0") == 0)
+    if (strcmp(phone_number, "0") == 0)
     {
         printf(YELLOW "\nReturning to dashboard...\n" RESET);
         Sleep(1000);
         return;
     }
 
-    if(!is_number_valid(phone_number))
+    if (!is_number_valid(phone_number))
     {
         printf(RED "Error: Invalid phone number format. Please try again.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
@@ -1231,17 +1217,15 @@ void mobile_recharge(user *current_user)///
         }
     }
 
-
     current_user->balance -= recharge_amount;
     printf(GREEN "Recharged %.2lf BDT to %s successfully!\n" RESET, recharge_amount, phone_number);
     printf(GREEN "New Balance: %.2lf BDT\n" RESET, current_user->balance);
 
-
     // Log transaction
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* new_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(new_transaction == NULL)
+        transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (new_transaction == NULL)
         {
             printf(RED "Error: Memory allocation failed for transaction log.\n" RESET);
             return;
@@ -1262,7 +1246,6 @@ void mobile_recharge(user *current_user)///
     _getch();
 }
 
-
 void view_transaction_history(user *current_user)
 {
     clear_screen();
@@ -1281,7 +1264,7 @@ void view_transaction_history(user *current_user)
     printf("------------------------------\n");
 
     // Reverse the list
-    transactionNode* view_transaction = reverse_transaction_list(current_user->transaction_head);
+    transactionNode *view_transaction = reverse_transaction_list(current_user->transaction_head);
     if (view_transaction == NULL)
     {
         printf(RED "No transactions found!\n" RESET);
@@ -1336,7 +1319,7 @@ void pay_bill(user *current_user)
 {
     clear_screen();
 
-    const char* bill_types[] = {
+    const char *bill_types[] = {
         "Electricity",
         "Water",
         "Internet",
@@ -1351,22 +1334,21 @@ void pay_bill(user *current_user)
         "College Fees",
         "Maintenance Fees",
         "Gym Membership Fees",
-        "Subscription Service Fees"
-    };
+        "Subscription Service Fees"};
 
     int num_of_bills = sizeof(bill_types) / sizeof(bill_types[0]);
 
     printf(CYAN "Select Bill Type:\n" RESET);
     printf("--------------------\n");
-    for(int i = 0; i < num_of_bills; i++)
+    for (int i = 0; i < num_of_bills; i++)
     {
-        printf("%d. %s\n", i+1, bill_types[i]);
+        printf("%d. %s\n", i + 1, bill_types[i]);
     }
     printf("--------------------\n");
 
     int choice;
     printf(CYAN "Enter your choice (0 to exit): " RESET);
-    while(scanf("%d", &choice) != 1 || choice < 0 || choice > num_of_bills)
+    while (scanf("%d", &choice) != 1 || choice < 0 || choice > num_of_bills)
     {
         clear_input_buffer();
 
@@ -1381,7 +1363,7 @@ void pay_bill(user *current_user)
     }
 
     clear_screen();
-    printf(CYAN "Bill Type : %s\n" RESET, bill_types[choice-1]);
+    printf(CYAN "Bill Type : %s\n" RESET, bill_types[choice - 1]);
 
     double bill_amount;
     printf(CYAN "Enter amount to pay : " RESET);
@@ -1409,17 +1391,17 @@ void pay_bill(user *current_user)
     printf(GREEN "Your new balance: %.2lf BDT\n" RESET, current_user->balance);
 
     // Log transaction
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* new_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(new_transaction == NULL)
+        transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (new_transaction == NULL)
         {
             printf(RED "Error: Memory allocation failed for transaction log.\n" RESET);
             return;
         }
 
         strcpy(new_transaction->transaction.type, "Pay Bill");
-        strcpy(new_transaction->transaction.to, bill_types[choice-1]);
+        strcpy(new_transaction->transaction.to, bill_types[choice - 1]);
         new_transaction->transaction.amount = bill_amount;
         timeNdate(&new_transaction->transaction);
 
@@ -1452,16 +1434,15 @@ void donate_money(user *current_user)
         "Empower Change Organization",
         "Community Builders",
         "Food for All Program",
-        "Safe Haven Shelter"
-    };
+        "Safe Haven Shelter"};
 
     int num_of_org = sizeof(organizations) / sizeof(organizations[0]);
 
     printf(CYAN "Select Organization/Cause to Donate:\n" RESET);
     printf("--------------------------------\n");
-    for(int i=0; i<10; i++)
+    for (int i = 0; i < 10; i++)
     {
-        printf("%d. %s\n", i+1, organizations[i]);
+        printf("%d. %s\n", i + 1, organizations[i]);
     }
     printf("--------------------------------\n");
 
@@ -1503,21 +1484,21 @@ void donate_money(user *current_user)
     }
 
     current_user->balance -= donation_amount;
-    printf(GREEN "Successfully donated %.2lf BDT to \"%s\"\n" RESET, donation_amount, organizations[choice-1]);
+    printf(GREEN "Successfully donated %.2lf BDT to \"%s\"\n" RESET, donation_amount, organizations[choice - 1]);
     printf(GREEN "New Balance: %.2lf BDT\n" RESET, current_user->balance);
 
     // Log transaction
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* new_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(new_transaction == NULL)
+        transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (new_transaction == NULL)
         {
             printf(RED "Error: Memory allocation failed for transaction log.\n" RESET);
             return;
         }
 
         strcpy(new_transaction->transaction.type, "Donation");
-        strcpy(new_transaction->transaction.to, organizations[choice-1]);
+        strcpy(new_transaction->transaction.to, organizations[choice - 1]);
         new_transaction->transaction.amount = donation_amount;
         timeNdate(&new_transaction->transaction);
 
@@ -1538,7 +1519,7 @@ void loan_money(user *current_user)
     double requested_loan_amount;
     printf(CYAN "Enter loan amount (0 to exit): " RESET);
 
-    while(scanf("%lf", &requested_loan_amount) != 1 || requested_loan_amount <= 0 || requested_loan_amount > 0.5 * current_user->balance)
+    while (scanf("%lf", &requested_loan_amount) != 1 || requested_loan_amount <= 0 || requested_loan_amount > 0.5 * current_user->balance)
     {
         clear_input_buffer();
 
@@ -1566,10 +1547,10 @@ void loan_money(user *current_user)
     printf(GREEN "New Loan Amount: %.2lf BDT\n" RESET, current_user->loan_amount);
 
     // Create new transaction for loan request
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* new_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(new_transaction == NULL)
+        transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (new_transaction == NULL)
         {
             printf(RED "Error: Memory allocation failed for Loan!\n" RESET);
             return;
@@ -1595,7 +1576,7 @@ void repay_money(user *current_user)
 {
     clear_screen();
 
-    if(current_user->loan_amount == 0)
+    if (current_user->loan_amount == 0)
     {
         printf(RED "No loan to repay.\n" RESET);
         printf(CYAN "Press any key to continue..." RESET);
@@ -1608,7 +1589,7 @@ void repay_money(user *current_user)
     double repay_amount;
     printf(CYAN "Enter amount to Repay (0 to exit): " RESET);
 
-    while(scanf("%lf", &repay_amount) != 1 || repay_amount <= 0 || repay_amount > current_user->balance || repay_amount > current_user->loan_amount)
+    while (scanf("%lf", &repay_amount) != 1 || repay_amount <= 0 || repay_amount > current_user->balance || repay_amount > current_user->loan_amount)
     {
         clear_input_buffer();
 
@@ -1643,10 +1624,10 @@ void repay_money(user *current_user)
     printf(GREEN "New Balance: %.2lf BDT\n" RESET, current_user->balance);
 
     // Create new transaction for loan repayment
-    if(current_user->transaction_count < MAX_TRANSACTIONS)
+    if (current_user->transaction_count < MAX_TRANSACTIONS)
     {
-        transactionNode* new_transaction = (transactionNode*)malloc(sizeof(transactionNode));
-        if(new_transaction == NULL)
+        transactionNode *new_transaction = (transactionNode *)malloc(sizeof(transactionNode));
+        if (new_transaction == NULL)
         {
             printf(RED "Error: Memory allocation failed for Repay Loan!\n" RESET);
             return;
@@ -1670,7 +1651,7 @@ void repay_money(user *current_user)
 
 void dashboard(user *current_user)
 {
-    while(1)
+    while (1)
     {
         clear_screen();
 
@@ -1704,57 +1685,68 @@ void dashboard(user *current_user)
 
         switch (choice)
         {
-            case 1: add_money(current_user);
-                    break;
-            case 2: cash_out(current_user);
-                    break;
-            case 3: send_money(current_user);
-                    break;
-            case 4: request_money(current_user);
-                    break;
-            case 5: provide_requested_money(current_user);
-                    break;
-            case 6: mobile_recharge(current_user);
-                    break;
-            case 7: view_transaction_history(current_user);
-                    break;
-            case 8: view_balance(current_user);
-                    break;
-            case 9: pay_bill(current_user);
-                    break;
-            case 10: donate_money(current_user);
-                    break;
-            case 11: loan_money(current_user);
-                    break;
-            case 12: repay_money(current_user);
-                    break;
+        case 1:
+            add_money(current_user);
+            break;
+        case 2:
+            cash_out(current_user);
+            break;
+        case 3:
+            send_money(current_user);
+            break;
+        case 4:
+            request_money(current_user);
+            break;
+        case 5:
+            provide_requested_money(current_user);
+            break;
+        case 6:
+            mobile_recharge(current_user);
+            break;
+        case 7:
+            view_transaction_history(current_user);
+            break;
+        case 8:
+            view_balance(current_user);
+            break;
+        case 9:
+            pay_bill(current_user);
+            break;
+        case 10:
+            donate_money(current_user);
+            break;
+        case 11:
+            loan_money(current_user);
+            break;
+        case 12:
+            repay_money(current_user);
+            break;
 
-            case 0:
-                clear_screen();
-                printf(GREEN "Logging " RESET);
+        case 0:
+            clear_screen();
+            printf(GREEN "Logging " RESET);
+            Sleep(200);
+            printf(GREEN "Out" RESET);
+            Sleep(200);
+            for (int i = 0; i < 3; i++)
+            {
+                printf(GREEN "." RESET);
                 Sleep(200);
-                printf(GREEN "Out" RESET);
-                Sleep(200);
-                for (int i = 0; i < 3; i++)
-                {
-                    printf(GREEN "." RESET);
-                    Sleep(200);
-                }
-                Sleep(1000);
-                return;
+            }
+            Sleep(1000);
+            return;
 
-            default:
-                printf(RED "Invalid choice!\n" RESET);
-                Sleep(1000);
-                break;
+        default:
+            printf(RED "Invalid choice!\n" RESET);
+            Sleep(1000);
+            break;
         }
     }
 }
 
-
 void main_menu()
 {
-    while(1)
+    while (1)
     {
         clear_screen();
         printf(YELLOW "MAIN MENU\n" RESET);
@@ -1780,84 +1772,84 @@ void main_menu()
 
         switch (choice)
         {
-            case 1:
-                Register();
-                break;
+        case 1:
+            Register();
+            break;
 
-            case 2:
+        case 2:
+        {
+            int index = login();
+
+            if (index != -1)
             {
-                int index = login();
+                clear_screen();
 
-                if (index != -1)
+                printf(GREEN "Logging " RESET);
+                Sleep(200);
+                printf(GREEN "In" RESET);
+                Sleep(200);
+
+                for (int i = 0; i < 3; i++)
                 {
-                    clear_screen();
-
-                    printf(GREEN "Logging " RESET);
+                    printf(GREEN "." RESET);
                     Sleep(200);
-                    printf(GREEN "In" RESET);
-                    Sleep(200);
-
-                    for (int i = 0; i < 3; i++)
-                    {
-                        printf(GREEN "." RESET);
-                        Sleep(200);
-                    }
-                    Sleep(1000);
-
-                    dashboard(&users[index]);
                 }
-                break;
-            }
-
-            case 3:
-                forget_password();
-                break;
-
-            case 4:
-            {
-                int index = all_accounts();
-
-                if (index != -1)
-                {
-                    clear_screen();
-
-                    printf(GREEN "Logging " RESET);
-                    Sleep(200);
-                    printf(GREEN "In" RESET);
-                    Sleep(200);
-
-                    for (int i = 0; i < 3; i++)
-                    {
-                        printf(GREEN "." RESET);
-                        Sleep(200);
-                    }
-                    Sleep(1000);
-
-                    dashboard(&users[index]);
-                }
-                break;
-            }
-
-            case 5:
-                if (confirm_action("Are you sure you want to delete user data"))
-                {
-                    delete_user_data();
-                }
-                else
-                {
-                    printf(YELLOW "Data deletion canceled.\n" RESET);
-                }
-                break;
-
-            case 0:
-                printf(GREEN "\nExiting the program. Goodbye!\n" RESET);
-                Sleep(250);
-                return;
-
-            default:
-                printf(RED "Invalid choice!\n" RESET);
                 Sleep(1000);
-                break;
+
+                dashboard(&users[index]);
+            }
+            break;
+        }
+
+        case 3:
+            forget_password();
+            break;
+
+        case 4:
+        {
+            int index = all_accounts();
+
+            if (index != -1)
+            {
+                clear_screen();
+
+                printf(GREEN "Logging " RESET);
+                Sleep(200);
+                printf(GREEN "In" RESET);
+                Sleep(200);
+
+                for (int i = 0; i < 3; i++)
+                {
+                    printf(GREEN "." RESET);
+                    Sleep(200);
+                }
+                Sleep(1000);
+
+                dashboard(&users[index]);
+            }
+            break;
+        }
+
+        case 5:
+            if (confirm_action("Are you sure you want to delete user data"))
+            {
+                delete_user_data();
+            }
+            else
+            {
+                printf(YELLOW "Data deletion canceled.\n" RESET);
+            }
+            break;
+
+        case 0:
+            printf(GREEN "\nExiting the program. Goodbye!\n" RESET);
+            Sleep(250);
+            return;
+
+        default:
+            printf(RED "Invalid choice!\n" RESET);
+            Sleep(1000);
+            break;
         }
     }
 }
