@@ -13,7 +13,7 @@
 #define MAX_REQUESTS 10
 #define MAX_DIGITS 12
 #define DATE_SIZE 11
-#define TIME_SIZE 9
+#define TIME_SIZE 12
 #define MAX_USERS 1000
 
 #define RESET "\033[0m" // Reset color
@@ -240,7 +240,6 @@ void cleanup_users()
         free_request_list(users[i].request_head);
     }
 }
-//
 
 void timeNdate(tran *transaction)
 {
@@ -248,8 +247,9 @@ void timeNdate(tran *transaction)
     struct tm *t = localtime(&now);
 
     strftime(transaction->date, sizeof(transaction->date), "%d-%m-%Y", t);
-    strftime(transaction->time, sizeof(transaction->time), "%H:%M:%S", t);
+    strftime(transaction->time, sizeof(transaction->time), "%I:%M:%S %p", t); // %I for 12-hour format, %p for AM/PM
 }
+
 
 void clear_screen()
 {
