@@ -1205,7 +1205,7 @@ void mobile_recharge(user *current_user) ///
             Sleep(1000);
             return;
         }
-
+        
         else if (recharge_amount < 0)
         {
             printf(RED "Invalid amount! Please enter a positive amount: " RESET);
